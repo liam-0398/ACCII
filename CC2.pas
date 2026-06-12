@@ -2,66 +2,54 @@ program CC2_Arduino;
 {W123 ACC2 Replacement Arduino}
 {slothbear - BenzWorld}
 
-    uses
-       fix16, hardwareserial, timer, digital;
+uses
+     fix16, hardwareserial, timer, digital;
 
-    const
-       VACPIN1 = 2;
-       VACPIN2 = 3;
-       VACPIN3 = 4;
-       VACPIN4 = 5;
-       HEATPIN = 6;
-       RECIRCP = 7;
-       BLOWER  = 9;
-       TMP01   = 10;  // MAKE ACCURATE LATER
-       TMP02   = 10;  // MAKE ACCURATE LATER
+const
+  VACPIN1 = 2;
+  VACPIN2 = 3;
+  VACPIN3 = 4;
+  VACPIN4 = 5;
+  HEATPIN = 6;
+  RECIRCP = 7;
+  BLOWER  = 9;
+  TMP01   = 10;
+  TMP02   = 11; // placeholder, fix later
 
-    var
-       pin1 : Integer;
-       pin2 : Integer;
-       pin3 : Integer;
-       pin4 : Integer;
-       pinR : Integer;
-       pinH : Integer;
-       con  : Int16;
-       tempsensor1: Integer;
-       tempsensor2: Integer;
-       tempselect : Integer;
+var
+  vac1, vac2, vac3, vac4 : Integer;
+  heat, recirc            : Integer;
+  blowerSpeed             : Integer;
+  targetTemp              : Integer;
 
-procedure pinModes(v1, v2, v3, v4, vR, vH: Integer);
-begin
-    // ASSIGN TO VARIABLES
-     pin1 := v1;
-     pin2 := v2;
-     pin3 := v3;
-     pin4 := v4;
-     pinR := vR;
-     pinH := vH;
-    // ASSIGN TO PINS
-     digitalWrite(VACPIN1, v1);
-     digitalWrite(VACPIN2, v2);
-     digitalWrite(VACPIN3, v3);
-     digitalWrite(VACPIN4, v4);
-     digitalWrite(HEATPIN, vR);
-     digitalWrite(RECIRCP, vH);
+procedure pinModes(v1, v2, v3, v4, h, r: Integer);
+     begin
+          vac1 := v1;  vac2 := v2;  vac3 := v3;  vac4 := v4;
+          heat := h;   recirc := r;
+          digitalWrite(VACPIN1, v1);
+          digitalWrite(VACPIN2, v2);
+          digitalWrite(VACPIN3, v3);
+          digitalWrite(VACPIN4, v4);
+          digitalWrite(HEATPIN, h);
+          digitalWrite(RECIRCP, r);
+     end;
 
-end;
+// PRINT CURRENT STATE OF PINS// PRINT CURRENT STATE OF PINS
 
-// PRINT CURRENT STATE OF PINS
 procedure listPin;
-          begin
+     begin
 
-               Serial.WriteChar(Char(pin1 + 48));
-               Serial.Write(Char(pin2 + 48));
-               Serial.Write(Char(pin3 + 48));
-               Serial.Write(Char(pin4 + 48));
-               Serial.Write(' R');
-               Serial.Write(Char(pinR + 48));
-               Serial.Write(' H');
-               Serial.Write(Char(pinH + 48));
-               Serial.Write(#13#10);
+          Serial.WriteChar(Char(pin1 + 48));
+          Serial.Write(Char(pin2 + 48));
+          Serial.Write(Char(pin3 + 48));
+          Serial.Write(Char(pin4 + 48));
+          Serial.Write(' R');
+          Serial.Write(Char(pinR + 48));
+          Serial.Write(' H');
+          Serial.Write(Char(pinH + 48));
+          Serial.Write(#13#10);
 
-          end;
+     end;
 
 // RESET PINS TO ZERO
 procedure pinReset;
@@ -72,9 +60,9 @@ procedure pinReset;
 procedure toggleRecirc;
      begin
           If pinR = 0 Then
-             pinR := 1
+               pinR := 1
              else
-             pinR := 0;
+               pinR := 0;
      end;
 
 procedure toggleHeat;
@@ -121,20 +109,19 @@ procedure Automatic;
 // GENERIC TESTING FUNCTION
 procedure selfTest;
      begin
-      Low;
-      delay(5550);
-      High;
-      delay(5550);
-      BiLevel;
-      delay(5550);
-      Defrost;
-      delay(5550);
-      toggleRecirc;
-      delay(5550);
-      toggleHeat;
-      delay(5550);
-      Serial.WriteLn('TEST COMPLETE');
-
+          Low;
+          delay(5550);
+          High;
+          delay(5550);
+          BiLevel;
+          delay(5550);
+          Defrost;
+          delay(5550);
+          toggleRecirc;
+          delay(5550);
+          toggleHeat;
+          delay(5550);
+          Serial.WriteLn('TEST COMPLETE');
      end;
 
 // INITITALIZE SERIAL CONNECTION - 9600 BAUD
