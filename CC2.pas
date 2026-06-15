@@ -10,10 +10,9 @@ const
   VACPIN2 = 3;
   VACPIN3 = 4;
 
-  COOLANTP = 7;
-
   RECIRCP = 5;
   RECIRCL = 6;
+  COOLANTP = 7;
 
   BLOWER1  = 9;
   BLOWER2  = 10;
@@ -30,7 +29,6 @@ procedure pinInit();
           digitalWrite(VACPIN1, 0);
           digitalWrite(VACPIN2, 0);
           digitalWrite(VACPIN3, 0);
-          digitalWrite(VACPIN4, 0);
           digitalWrite(COOLANTP, 0);
           digitalWrite(RECIRCP, 0);
           heat := 0;
@@ -53,7 +51,6 @@ procedure pinModes(v1, v2, v3, h, r: Integer);
 // PRINT CURRENT STATE OF PINS// PRINT CURRENT STATE OF PINS
 procedure listPin;
      begin
-
           Serial.WriteChar(Char(pin1 + 48));
           Serial.Write(Char(pin2 + 48));
           Serial.Write(Char(pin3 + 48));
@@ -62,7 +59,6 @@ procedure listPin;
           Serial.Write(' H');
           Serial.Write(Char(pinH + 48));
           Serial.Write(#13#10);
-
      end;
 
 procedure toggleRecirc;
@@ -90,7 +86,7 @@ procedure toggleHeat;
 procedure toggleCool;
      begin
              digitalWrite(COOLANTP, 0);
-             heat := 1;
+             heat := 0;
      end;
 
 // ACTUAL CLIMATE CONTROL MODES
