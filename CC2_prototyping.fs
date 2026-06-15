@@ -89,7 +89,7 @@ variable TEMPSET			\ Desired Air Temp (FOR AUTO)
 : LOW   
 	 0 1 0  setModePins
 	 PIN1 @ PIN2 @  + 1 =  IF
-		cr s" LOW BLOWER" type cr
+		cr s" LOW" type cr
 		2 MODE ! 
 		PINB1-H
 		FRESH
@@ -100,7 +100,7 @@ variable TEMPSET			\ Desired Air Temp (FOR AUTO)
 : HIGH 
 	0 0 1  setModePins
 	PIN1 @ PIN2 @  + 0  =  IF
-		cr s" HIGH BLOWER" type cr
+		cr s" HIGH" type cr
 		3 MODE ! 
 		PINB2-H
 		RECIRC
