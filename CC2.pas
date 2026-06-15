@@ -22,6 +22,18 @@ var
   blowerSpeed             : Integer;
   targetTemp              : Integer;
 
+procedure pinInit();
+     begin
+          digitalWrite(VACPIN1, 0);
+          digitalWrite(VACPIN2, 0);
+          digitalWrite(VACPIN3, 0);
+          digitalWrite(VACPIN4, 0);
+          digitalWrite(HEATPIN, 0);
+          digitalWrite(RECIRCP, 0);
+          heat := 0;
+          recirc := 0;
+     end;
+
 procedure pinModes(v1, v2, v3, v4, h, r: Integer);
      begin
           vac1 := v1;  vac2 := v2;  vac3 := v3;  vac4 := v4;
@@ -32,10 +44,11 @@ procedure pinModes(v1, v2, v3, v4, h, r: Integer);
           digitalWrite(VACPIN4, v4);
           digitalWrite(HEATPIN, h);
           digitalWrite(RECIRCP, r);
+          heat := h;
+          recirc := r;
      end;
 
 // PRINT CURRENT STATE OF PINS// PRINT CURRENT STATE OF PINS
-
 procedure listPin;
      begin
 
@@ -51,28 +64,30 @@ procedure listPin;
 
      end;
 
-// RESET PINS TO ZERO
-procedure pinReset;
-     begin
-          pinModes(0, 0, 0, 0, 0, 0);
-     end;
-
 procedure toggleRecirc;
      begin
-          if pinR = 0 Then
-               pinR := 1
+          if recirc = 0 Then
+               begin
+               digitalWrite(RECIRCP, 1);
+               recirc := 1;
+               end
              else
-               pinR := 0;
+               begin
+               digitalWrite(RECIRCP, 0);
+               recirc := 0;
+               end;
      end;
 
 procedure toggleHeat;
      begin
-             pinH := 1;
+             digitalWrite(HEATPIN, 1);
+             heat := 1;
      end;
 
 procedure toggleCool;
      begin
-             pinH := 0;
+             digitalWrite(HEATPIN, 0);
+             heat := 1;
      end;
 
 // ACTUAL CLIMATE CONTROL MODES
@@ -135,7 +150,7 @@ procedure serialInit;
 // SCAN FOR SERIRAL INPUT AND SELECT MODE
 // WILL BE DONE WITH BUTTONS WHEN IN THE CAR
 begin
-  pinReset;
+  pinInit;
   serialInit;
   listPin;
 
