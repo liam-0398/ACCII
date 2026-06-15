@@ -72,11 +72,11 @@ variable TEMPSET			\ Desired Air Temp (FOR AUTO)
 : OFF   	clearPin killBlower ;
 
 : DEFROST   
-	1 1 0   setModePins				\ Set associated vac pattern for defrost mode (currently fake)
+	1 1 0   setModePins					\ Set associated vac pattern for defrost mode (currently fake)
 	PIN1 @ PIN2 @  + 2  =  IF			\ Ensure pins are proper (These are not fully fleshed out for all)
 		cr s" DEFROST" type cr
 		1 MODE ! 						\ Announce MODE1 in variable
-		2 BLOWERPIN !				\ Command High blower speed
+		2 BLOWERPIN !					\ Command High blower speed
 		FRESH							\ Ensure recirculate is off
 		ELSE
 		outputError 					\ Something is wrong
@@ -140,11 +140,11 @@ variable TEMPSET			\ Desired Air Temp (FOR AUTO)
 
 : SELFTEST
 	cr s" SELFTEST (expect delay) =====" type cr
-	listPin clearPin listPin
+		listPin clearPin listPin
 	cr s" RECIRC" type cr
-	recirc listPin 4000 ms fresh listPin 4000 ms
+		recirc listPin 4000 ms fresh listPin 4000 ms
 	cr s" SENSORS" type cr
-	dOAT dIAT dTEMPSET cr
+		dOAT dIAT dTEMPSET cr
 	cr s" MODES =================" type
 		defrost 4000 ms listPin 
 		high 4000 ms listPin
