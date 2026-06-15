@@ -1,7 +1,7 @@
 
 \ CC2 - Development Environment
 \ slothbear - BenzWorld.org
-\ AVR - FlashForth
+\ AVR - eForth1
 
 
  \\ VARIABLES ------------------------------------------------------------
@@ -20,30 +20,32 @@ variable IAT				\ Inside Air Temp
 variable TEMPSET			\ Desired Air Temp (FOR AUTO)
 
 \ Vents
-: PIN1-H 12 1 digitalWrite 1 PIN1 ! ;
-: PIN1-L 12 0 digitalWrite 0 PIN1 ! ;
-: PIN2-H 13 1 digitalWrite 1 PIN2 ! ;
-: PIN2-L 13 0 digitalWrite 0 PIN2 ! ;
-: PIN3-H 14 1 digitalWrite 1 PIN3 ! ;
-: PIN3-L 14 0 digitalWrite 0 PIN3 ! ;
+: PIN1-H   1 2 OUT   1 PIN1 ! ;
+: PIN1-L   0 2 OUT   0 PIN1 ! ;
+: PIN2-H   1 3 OUT   1 PIN2 ! ;
+: PIN2-L   0 3 OUT   0 PIN2 ! ;
+: PIN3-H   1 4 OUT   1 PIN3 ! ;
+: PIN3-L   0 4 OUT   0 PIN3 ! ;
 
 \ Recirculate
-: PINR-H 15 1 digitalWrite 1 PINR ! ;
-: PINR-L 15 0 digitalWrite 0 PINR ! ;
-: RLED-ON 15 1 digitalWrite 1 PINR ! ;
-: RLED-OFF 15 0 digitalWrite 0 PINR ! ;
+: PINR-H   1 5 OUT   1 PINR ! ;
+: PINR-L   0 5 OUT   0 PINR ! ;
+
+\ Recirc LED
+: RLED-ON    1 6 OUT ;
+: RLED-OFF   0 6 OUT ;
 
 \ Coolant Valve
-: PINC-H 16 1 digitalWrite 1 PINC ! ;
-: PINC-L 16 0 digitalWrite 0 PINC ! ;
+: PINC-H   1 7 OUT   1 PINC ! ;
+: PINC-L   0 7 OUT   0 PINC ! ;
 
-\ Blower
-: PINB1-H 17 1 digitalWrite 1 PINB1 ! ;
-: PINB1-L 17 0 digitalWrite 0 PINB1 ! ;
-: PINB2-H 18 1 digitalWrite 1 PINB2 ! ;
-: PINB2-L 18 0 digitalWrite 0 PINB2 ! ;
-: PINB3-H 19 1 digitalWrite 1 PINB3 ! ;
-: PINB3-L 19 0 digitalWrite 0 PINB3 ! ;
+\ Blower resistor taps
+: PINB1-H   1 9 OUT   1 PINB1 ! ;
+: PINB1-L   0 9 OUT   0 PINB1 ! ;
+: PINB2-H   1 10 OUT  1 PINB2 ! ;
+: PINB2-L   0 10 OUT  0 PINB2 ! ;
+: PINB3-H   1 11 OUT  1 PINB3 ! ;
+: PINB3-L   0 11 OUT  0 PINB3 ! ;
 
 
 \\ PINS ------------------------------------------------------------
@@ -145,22 +147,27 @@ variable TEMPSET			\ Desired Air Temp (FOR AUTO)
 : SELFTEST
 	cr s" SELFTEST (expect delay) =====" type cr
 		listPin clearPin listPin
+
 	cr s" RECIRC" type cr
 		recirc listPin 4000 ms fresh listPin 4000 ms
+
 	cr s" SENSORS" type cr
 		dOAT dIAT dTEMPSET cr
+
 	cr s" MODES =================" type
 		defrost 4000 ms listPin 
 		high 4000 ms listPin
 		auto 4000 ms listPin
 		bilevel 4000 ms listPin
 		low 4000 ms listPin
+
 	cr s" TEMPERATURE" type cr
 		heat 10000 ms listPin
 		cool 10000 ms listPin
 		0 0 0 setModePins 0 setMode
 		killBlower
 		heat recirc
+
 	cr s" SELFTEST COMPLETE - VERIFY RESULTS" type cr ;
 	
 \ : pinMode ( pin mode -- ) ." pinMode " . . cr ;
@@ -175,6 +182,17 @@ variable TEMPSET			\ Desired Air Temp (FOR AUTO)
 \ STARTUP LOGIC ========================================
 \ Just a reset to zero state. Heat on recirculate with no blower
 : INIT   cr s" CLIMATE CONTROL INITIALIZED ---- " type 
+
+1 2 PINMODE
+1 3 PINMODE
+1 4 PINMODE
+1 5 PINMODE
+1 6 PINMODE
+1 7 PINMODE
+1 9 PINMODE
+1 10 PINMODE
+1 11 PINMODE
+
 0 0 0 setModePins
 0 BLOWERPIN !
 heat recirc

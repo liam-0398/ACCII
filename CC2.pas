@@ -9,15 +9,18 @@ const
   VACPIN1 = 2;
   VACPIN2 = 3;
   VACPIN3 = 4;
-  VACPIN4 = 5;
-  HEATPIN = 6;
-  RECIRCP = 7;
-  BLOWER  = 9;
-  TMP01   = 10;
-  TMP02   = 11; // placeholder, fix later
+
+  COOLANTP = 7;
+
+  RECIRCP = 5;
+  RECIRCL = 6;
+
+  BLOWER1  = 9;
+  BLOWER2  = 10;
+  BLOWER3  = 11; // placeholder, fix later
 
 var
-  vac1, vac2, vac3, vac4 : Integer;
+  vac1, vac2, vac3        : Integer;
   heat, recirc            : Integer;
   blowerSpeed             : Integer;
   targetTemp              : Integer;
@@ -28,21 +31,20 @@ procedure pinInit();
           digitalWrite(VACPIN2, 0);
           digitalWrite(VACPIN3, 0);
           digitalWrite(VACPIN4, 0);
-          digitalWrite(HEATPIN, 0);
+          digitalWrite(COOLANTP, 0);
           digitalWrite(RECIRCP, 0);
           heat := 0;
           recirc := 0;
      end;
 
-procedure pinModes(v1, v2, v3, v4, h, r: Integer);
+procedure pinModes(v1, v2, v3, h, r: Integer);
      begin
           vac1 := v1;  vac2 := v2;  vac3 := v3;  vac4 := v4;
           heat := h;   recirc := r;
           digitalWrite(VACPIN1, v1);
           digitalWrite(VACPIN2, v2);
           digitalWrite(VACPIN3, v3);
-          digitalWrite(VACPIN4, v4);
-          digitalWrite(HEATPIN, h);
+          digitalWrite(COOLANTP, h);
           digitalWrite(RECIRCP, r);
           heat := h;
           recirc := r;
@@ -55,7 +57,6 @@ procedure listPin;
           Serial.WriteChar(Char(pin1 + 48));
           Serial.Write(Char(pin2 + 48));
           Serial.Write(Char(pin3 + 48));
-          Serial.Write(Char(pin4 + 48));
           Serial.Write(' R');
           Serial.Write(Char(pinR + 48));
           Serial.Write(' H');
@@ -69,24 +70,26 @@ procedure toggleRecirc;
           if recirc = 0 Then
                begin
                digitalWrite(RECIRCP, 1);
+               digitalWrite(RECIRCL, 1);
                recirc := 1;
                end
              else
                begin
                digitalWrite(RECIRCP, 0);
+               digitalWrite(RECIRCL, 0);
                recirc := 0;
                end;
      end;
 
 procedure toggleHeat;
      begin
-             digitalWrite(HEATPIN, 1);
+             digitalWrite(COOLANTP, 1);
              heat := 1;
      end;
 
 procedure toggleCool;
      begin
-             digitalWrite(HEATPIN, 0);
+             digitalWrite(COOLANTP, 0);
              heat := 1;
      end;
 
@@ -94,22 +97,22 @@ procedure toggleCool;
 // CURRENTLY USING ARBITRARY PIN ASSIGNMENTS
 procedure Low;
      begin
-          pinModes(1, 0, 0, 0, 0, 0);
+          pinModes(1, 0, 0, 0, 0);
      end;
 
 procedure High;
      begin
-          pinModes(1, 1, 0, 0, 1, 0);
+          pinModes(1, 1, 0, 0, 1);
      end;
 
 procedure BiLevel;
      begin
-          pinModes(0, 0, 1, 1, 1, 0);
+          pinModes(0, 0, 1, 1, 1);
      end;
 
 procedure Defrost;
      begin
-          pinModes(1, 1, 1, 1, 0, 0);
+          pinModes(1, 1, 1, 1, 0);
      end;
 
 // WIP - LATER PRIORITY
