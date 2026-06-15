@@ -30,6 +30,8 @@ variable TEMPSET			\ Desired Air Temp (FOR AUTO)
 \ Recirculate
 : PINR-H 15 1 digitalWrite 1 PINR ! ;
 : PINR-L 15 0 digitalWrite 0 PINR ! ;
+: RLED-ON 15 1 digitalWrite 1 PINR ! ;
+: RLED-OFF 15 0 digitalWrite 0 PINR ! ;
 
 \ Coolant Valve
 : PINC-H 16 1 digitalWrite 1 PINC ! ;
@@ -48,11 +50,13 @@ variable TEMPSET			\ Desired Air Temp (FOR AUTO)
 \ MODE is a variable that signifies which mode is currently operating eg. Defrost or Bi-Level
 : listPin    	PIN1 @ . PIN2 @ . PIN3 @ .  s" H/C" type PINC @ .  s" MODE" type MODE @ . s" R" type PINR @ . BLOWERPIN @ . cr ;
 : clearPin    	PIN1-L PIN2-L PIN3-L PINR-L PINC-L 0 MODE ! ;
-: killBlower 	0 BLOWERPIN ! ;
+: killBlower 	PINB1-L PINB2-L PINB3-L 0 BLOWERPIN ! ;
+
 : setModePins  ( p1 p2 p3 -- )
     if PIN3-H else PIN3-L then
     if PIN2-H else PIN2-L then
     if PIN1-H else PIN1-L then ;
+
 : checkMode    	cr MODE @ . cr  ;
 : setMode   	( mode -- ) MODE !  ;
 : outputError   cr s" CHECK OUTPUTS" type cr ;
@@ -64,8 +68,8 @@ variable TEMPSET			\ Desired Air Temp (FOR AUTO)
 : dTEMPSET   	s" Temperature Setting: " TEMPSET @ . ;
 
 \ Simple door and valve functions
-: RECIRC    PINR-H ;
-: FRESH    	PINR-L ;		
+: RECIRC    PINR-H RLED-ON ;
+: FRESH    	PINR-L RLED-OFF ;		
 : HEAT    	PINC-H ;
 : COOL 		PINC-L ;
 : BLOW   	( num -- )  BLOWERPIN ! ;  \ Manually set blower speed (0,1,2,5)
@@ -76,7 +80,7 @@ variable TEMPSET			\ Desired Air Temp (FOR AUTO)
 	PIN1 @ PIN2 @  + 2  =  IF			\ Ensure pins are proper (These are not fully fleshed out for all)
 		cr s" DEFROST" type cr
 		1 MODE ! 						\ Announce MODE1 in variable
-		2 BLOWERPIN !					\ Command High blower speed
+		PINB3-H					\ Command High blower speed
 		FRESH							\ Ensure recirculate is off
 		ELSE
 		outputError 					\ Something is wrong
@@ -87,7 +91,7 @@ variable TEMPSET			\ Desired Air Temp (FOR AUTO)
 	 PIN1 @ PIN2 @  + 1 =  IF
 		cr s" LOW BLOWER" type cr
 		2 MODE ! 
-		1 BLOWERPIN !
+		PINB1-H
 		FRESH
 		ELSE
 		outputError 
@@ -98,7 +102,7 @@ variable TEMPSET			\ Desired Air Temp (FOR AUTO)
 	PIN1 @ PIN2 @  + 0  =  IF
 		cr s" HIGH BLOWER" type cr
 		3 MODE ! 
-		2 BLOWERPIN !
+		PINB2-H
 		RECIRC
 		ELSE
 		outputError 
@@ -109,7 +113,7 @@ variable TEMPSET			\ Desired Air Temp (FOR AUTO)
 	PIN1 @ PIN2 @  + 1  =  IF
 		cr s" BI-LEVEL" type cr
 		4 MODE ! 
-		1 BLOWERPIN !
+		PINB2-H
 		RECIRC
 		ELSE
 		outputError 
