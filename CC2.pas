@@ -59,7 +59,7 @@ procedure pinReset;
 
 procedure toggleRecirc;
      begin
-          If pinR = 0 Then
+          if pinR = 0 Then
                pinR := 1
              else
                pinR := 0;
