@@ -5,37 +5,47 @@
 
 
  \\ VARIABLES ------------------------------------------------------------
-variable MODE			\ Operating mode (set internally by functions)
+variable MODE				\ Operating mode (set internally by functions)
 variable PIN1				\ Simulated Vac Actuator
 variable PIN2 				\ ^
 variable PIN3				\ ^
-variable PINC			\ On/Off valve coolant flow to heater core
+variable PINC				\ On/Off valve coolant flow to heater core
 variable PINR				\ Recirculate Door
-variable BLOWERPIN		\ Level of blower (0,1,2) (5 is auto)
-
+variable BLOWERPIN			\ Level of blower (0,1,2) (5 is auto)
+variable PINB1				\ Blower level - resistor ladder step
+variable PINB2				\ Blower level - resistor ladder step
+variable PINB3				\ Blower level - resistor ladder step
 variable OAT				\ Outside Air Temp
 variable IAT				\ Inside Air Temp
-variable TEMPSET		\ Desired Air Temp (FOR AUTO)
+variable TEMPSET			\ Desired Air Temp (FOR AUTO)
 
 \ Vents
 : PIN1-H 12 1 digitalWrite 1 PIN1 ! ;
 : PIN1-L 12 0 digitalWrite 0 PIN1 ! ;
-: PIN2-H 12 1 digitalWrite 1 PIN2 ! ;
-: PIN2-L 12 0 digitalWrite 0 PIN2 ! ;
-: PIN3-H 12 1 digitalWrite 1 PIN3 ! ;
-: PIN3-L 12 0 digitalWrite 0 PIN3 ! ;
+: PIN2-H 13 1 digitalWrite 1 PIN2 ! ;
+: PIN2-L 13 0 digitalWrite 0 PIN2 ! ;
+: PIN3-H 14 1 digitalWrite 1 PIN3 ! ;
+: PIN3-L 14 0 digitalWrite 0 PIN3 ! ;
 
 \ Recirculate
-: PINR-H 12 1 digitalWrite 1 PINR ! ;
-: PINR-L 12 0 digitalWrite 0 PINR ! ;
+: PINR-H 15 1 digitalWrite 1 PINR ! ;
+: PINR-L 15 0 digitalWrite 0 PINR ! ;
 
 \ Coolant Valve
-: PINC-H 12 1 digitalWrite 1 PINC ! ;
-: PINC-L 12 0 digitalWrite 0 PINC ! ;
+: PINC-H 16 1 digitalWrite 1 PINC ! ;
+: PINC-L 16 0 digitalWrite 0 PINC ! ;
+
+\ Blower
+: PINB1-H 17 1 digitalWrite 1 PINC ! ;
+: PINB1-L 17 0 digitalWrite 0 PINC ! ;
+: PINB2-H 18 1 digitalWrite 1 PINC ! ;
+: PINB2-L 18 0 digitalWrite 0 PINC ! ;
+: PINB3-H 19 1 digitalWrite 1 PINC ! ;
+: PINB3-L 19 0 digitalWrite 0 PINC ! ;
 
 
- \\ PINS ------------------------------------------------------------
-\ MODE is a variable that signifies which mode is currently operating eg Defrost or Bi-Level
+\\ PINS ------------------------------------------------------------
+\ MODE is a variable that signifies which mode is currently operating eg. Defrost or Bi-Level
 : listPin    	PIN1 @ . PIN2 @ . PIN3 @ . PIN4 @ . s" H/C" type PINC @ .  s" MODE" type MODE @ . s" R" type PINR @ . BLOWERPIN @ . cr ;
 : clearPin    	PIN1-L PIN2-L PIN3-L PINR-L PINC-L 0 MODE ! ;
 : killBlower 	0 BLOWERPIN ! ;
@@ -48,6 +58,7 @@ variable TEMPSET		\ Desired Air Temp (FOR AUTO)
 : outputError   cr s" CHECK OUTPUTS" type cr ;
 
 \ D for display. Debugging commands to print the value of a placeholder variable
+\ Last priority
 : dOAT   		s" OAT: " OAT @ . ;
 : dIAT   		s" IAT: " IAT @ . ;
 : dTEMPSET   	s" Temperature Setting: " TEMPSET @ . ;
@@ -105,11 +116,13 @@ variable TEMPSET		\ Desired Air Temp (FOR AUTO)
 		THEN ;
 		
 \ : autoBlowerControl             NEED TO FIGURE THIS OUT. FAN CONTROL FOR AUTO CLIMATE
+\ Last priority
 \	IAT @ TEMPSET @ - abs
 \ 		dup 100 > if drop 2 exit then 
 \		dup 50 > if drop 1 exit then   
 \		drop 0 ;     	
-		
+
+\ Last priority		
 : AUTO
 	5 MODE !
 	cr s" AUTOMATIC" type cr
@@ -147,16 +160,12 @@ variable TEMPSET		\ Desired Air Temp (FOR AUTO)
 	cr s" SELFTEST COMPLETE - VERIFY RESULTS" type cr ;
 	
 \ : pinMode ( pin mode -- ) ." pinMode " . . cr ;
-\ : dWrite ( pin state -- ) cr ." PIN W " dup  .  cr ;
-\ : dRead ( pin -- state ) cr ." PIN R " dup . 0 ;
-\ : delay ms ;
 
  : S1 ( set -- )   dup PIN1 ! ." 1 " . cr ;
  : S2 ( set -- )   dup PIN2 ! ." 2 " . cr ;
  : S3 ( set -- )   dup PIN3 ! ." 3 " . cr ;
- : S4 ( set -- )   dup PIN4 ! ." 4 " . cr ;
- : S5 ( set -- )   dup PIN5CC ! ." 5 " . cr ;	
- : S6 ( set -- )   dup PIN6 ! ." 6 " . cr ;			 
+ : S5 ( set -- )   dup PINR ! ." 5 " . cr ;	
+ : S6 ( set -- )   dup PINC ! ." 6 " . cr ;			 
 
 
 \ STARTUP LOGIC ========================================
