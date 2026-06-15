@@ -9,7 +9,6 @@ variable MODE			\ Operating mode (set internally by functions)
 variable PIN1				\ Simulated Vac Actuator
 variable PIN2 				\ ^
 variable PIN3				\ ^
-variable PIN4				\ ^
 variable PINC			\ On/Off valve coolant flow to heater core
 variable PINR				\ Recirculate Door
 variable BLOWERPIN		\ Level of blower (0,1,2) (5 is auto)
@@ -37,20 +36,21 @@ variable TEMPSET		\ Desired Air Temp (FOR AUTO)
 
  \\ PINS ------------------------------------------------------------
 \ MODE is a variable that signifies which mode is currently operating eg Defrost or Bi-Level
-: listPin    PIN1 @ . PIN2 @ . PIN3 @ . PIN4 @ . s" H/C" type PINC @ .  s" MODE" type MODE @ . s" R" type PINR @ . BLOWERPIN @ . cr ;
-: clearPin    PIN1-L PIN2-L PIN3-L PINR-L PINC-L 0 MODE ! ;
-: killBlower 0 BLOWERPIN ! ;
-: setModePins   //PIN4 ! PIN3 ! PIN2 ! PIN1 ! 
-	// If 0 PINX-L IF 1 PINX-H
-;
-: checkMode    cr MODE @ . cr  ;
-: setMode   ( mode -- ) MODE !  ;
-: outputError    cr s" CHECK OUTPUTS" type cr ;
+: listPin    	PIN1 @ . PIN2 @ . PIN3 @ . PIN4 @ . s" H/C" type PINC @ .  s" MODE" type MODE @ . s" R" type PINR @ . BLOWERPIN @ . cr ;
+: clearPin    	PIN1-L PIN2-L PIN3-L PINR-L PINC-L 0 MODE ! ;
+: killBlower 	0 BLOWERPIN ! ;
+: setModePins  ( p1 p2 p3 -- )
+    if PIN3-HIGH else PIN3-LOW then
+    if PIN2-HIGH else PIN2-LOW then
+    if PIN1-HIGH else PIN1-LOW then ;
+: checkMode    	cr MODE @ . cr  ;
+: setMode   	( mode -- ) MODE !  ;
+: outputError   cr s" CHECK OUTPUTS" type cr ;
 
 \ D for display. Debugging commands to print the value of a placeholder variable
-: dOAT   s" OAT: " OAT @ . ;
-: dIAT   s" IAT: " IAT @ . ;
-: dTEMPSET    s" Temperature Setting: " TEMPSET @ . ;
+: dOAT   		s" OAT: " OAT @ . ;
+: dIAT   		s" IAT: " IAT @ . ;
+: dTEMPSET   	s" Temperature Setting: " TEMPSET @ . ;
 
 \ Simple door and valve functions
 : RECIRC    PINR-H ;
@@ -61,7 +61,7 @@ variable TEMPSET		\ Desired Air Temp (FOR AUTO)
 : OFF   	clearPin killBlower ;
 
 : DEFROST   
-	1 1 0 0  setModePins				\ Set associated vac pattern for defrost mode (currently fake)
+	1 1 0   setModePins				\ Set associated vac pattern for defrost mode (currently fake)
 	PIN1 @ PIN2 @  + 2  =  IF			\ Ensure pins are proper (These are not fully fleshed out for all)
 		cr s" DEFROST" type cr
 		1 MODE ! 						\ Announce MODE1 in variable
@@ -72,7 +72,7 @@ variable TEMPSET		\ Desired Air Temp (FOR AUTO)
 		THEN ;
 		
 : LOW   
-	 0 1 0 1 setModePins
+	 0 1 0  setModePins
 	 PIN1 @ PIN2 @  + 1 =  IF
 		cr s" LOW BLOWER" type cr
 		2 MODE ! 
@@ -83,7 +83,7 @@ variable TEMPSET		\ Desired Air Temp (FOR AUTO)
 		THEN ;
 		
 : HIGH 
-	0 0 1 1 setModePins
+	0 0 1  setModePins
 	PIN1 @ PIN2 @  + 0  =  IF
 		cr s" HIGH BLOWER" type cr
 		3 MODE ! 
@@ -94,7 +94,7 @@ variable TEMPSET		\ Desired Air Temp (FOR AUTO)
 		THEN ;
 	
 : BILEVEL
-	0 1 1 1 setModePins
+	0 1 1  setModePins
 	PIN1 @ PIN2 @  + 1  =  IF
 		cr s" BI-LEVEL" type cr
 		4 MODE ! 
