@@ -36,23 +36,23 @@ variable TEMPSET			\ Desired Air Temp (FOR AUTO)
 : PINC-L 16 0 digitalWrite 0 PINC ! ;
 
 \ Blower
-: PINB1-H 17 1 digitalWrite 1 PINC ! ;
-: PINB1-L 17 0 digitalWrite 0 PINC ! ;
-: PINB2-H 18 1 digitalWrite 1 PINC ! ;
-: PINB2-L 18 0 digitalWrite 0 PINC ! ;
-: PINB3-H 19 1 digitalWrite 1 PINC ! ;
-: PINB3-L 19 0 digitalWrite 0 PINC ! ;
+: PINB1-H 17 1 digitalWrite 1 PINB1 ! ;
+: PINB1-L 17 0 digitalWrite 0 PINB1 ! ;
+: PINB2-H 18 1 digitalWrite 1 PINB2 ! ;
+: PINB2-L 18 0 digitalWrite 0 PINB2 ! ;
+: PINB3-H 19 1 digitalWrite 1 PINB3 ! ;
+: PINB3-L 19 0 digitalWrite 0 PINB3 ! ;
 
 
 \\ PINS ------------------------------------------------------------
 \ MODE is a variable that signifies which mode is currently operating eg. Defrost or Bi-Level
-: listPin    	PIN1 @ . PIN2 @ . PIN3 @ . PIN4 @ . s" H/C" type PINC @ .  s" MODE" type MODE @ . s" R" type PINR @ . BLOWERPIN @ . cr ;
+: listPin    	PIN1 @ . PIN2 @ . PIN3 @ .  s" H/C" type PINC @ .  s" MODE" type MODE @ . s" R" type PINR @ . BLOWERPIN @ . cr ;
 : clearPin    	PIN1-L PIN2-L PIN3-L PINR-L PINC-L 0 MODE ! ;
 : killBlower 	0 BLOWERPIN ! ;
 : setModePins  ( p1 p2 p3 -- )
-    if PIN3-HIGH else PIN3-LOW then
-    if PIN2-HIGH else PIN2-LOW then
-    if PIN1-HIGH else PIN1-LOW then ;
+    if PIN3-H else PIN3-L then
+    if PIN2-H else PIN2-L then
+    if PIN1-H else PIN1-L then ;
 : checkMode    	cr MODE @ . cr  ;
 : setMode   	( mode -- ) MODE !  ;
 : outputError   cr s" CHECK OUTPUTS" type cr ;
@@ -154,7 +154,7 @@ variable TEMPSET			\ Desired Air Temp (FOR AUTO)
 	cr s" TEMPERATURE" type cr
 		heat 10000 ms listPin
 		cool 10000 ms listPin
-		0 0 0 0 setModePins 0 setMode
+		0 0 0 setModePins 0 setMode
 		killBlower
 		heat recirc
 	cr s" SELFTEST COMPLETE - VERIFY RESULTS" type cr ;
@@ -171,7 +171,7 @@ variable TEMPSET			\ Desired Air Temp (FOR AUTO)
 \ STARTUP LOGIC ========================================
 \ Just a reset to zero state. Heat on recirculate with no blower
 : INIT   cr s" CLIMATE CONTROL INITIALIZED ---- " type 
-0 0 0 0 setModePins
+0 0 0 setModePins
 0 BLOWERPIN !
 heat recirc
 listPin
