@@ -78,7 +78,7 @@ variable TEMPSET			\ Desired Air Temp (FOR AUTO)
 : OFF   	clearPin killBlower ;
 
 : DEFROST   
-	1 1 0   setModePins					\ Set associated vac pattern for defrost mode (currently fake)
+	0 0 0   setModePins					\ Set associated vac pattern for defrost mode (currently fake)
 	PIN1 @ PIN2 @  + 2  =  IF			\ Ensure pins are proper (These are not fully fleshed out for all)
 		cr s" DEFROST" type cr
 		1 MODE ! 						\ Announce MODE1 in variable
