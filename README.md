@@ -13,7 +13,7 @@ Project can be followed here https://www.benzworld.org/threads/diy-acc2-unit-rep
 ```
 All factory vent mode control
 Blower control
-Temperature control via third party 12v soldenoid
+Temperature control via third party 12v solenoid
 Automatic mode with temp sensing and intellegent defrost# Last Priority
 ```
 ## What is Not Planned
