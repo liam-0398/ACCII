@@ -1,6 +1,7 @@
 ; CC2 - Development Environment
 ; slothbear - BenzWorld.org
 ; ESP32 - uLisp
+; WORK IN PROGRESS
 
 (defvar VACPIN1 2)
 (defvar VACPIN2 3)
@@ -26,26 +27,28 @@
 (defun hi ()
     (digialwrite VACPIN1 t)
     (digialwrite VACPIN2 t)
-    (digialwrite VACPIN3 t)
-)
+    (digialwrite VACPIN3 t))
 
 (defun lo ()
     (digialwrite VACPIN1 t)
     (digialwrite VACPIN2 t)
-    (digialwrite VACPIN3 t)
-)
+    (digialwrite VACPIN3 t))
 
 (defun bi-level ()
     (digialwrite VACPIN1 t)
     (digialwrite VACPIN2 t)
-    (digialwrite VACPIN3 t)
-)
+    (digialwrite VACPIN3 t))
 
 (defun auto ()
     (digialwrite VACPIN1 t)
     (digialwrite VACPIN2 t)
-    (digialwrite VACPIN3 t)
-)
+    (digialwrite VACPIN3 t))
+
+(defun self-test ()
+    (hi)
+    (lo)
+    (bi-level)
+    (auto))
 
 (defun init ()
     (pinmode 2 t)
@@ -56,7 +59,6 @@
     (pinmode 7 t)
     (pinmode 8 t)
     (pinmode 9 t)
-    (pinmode 9 t)
-)
+    (pinmode 9 t))
 
 (init)
