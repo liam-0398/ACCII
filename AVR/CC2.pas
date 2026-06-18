@@ -138,7 +138,6 @@ procedure selfTest;
           Serial.WriteLn('TEST COMPLETE');
      end;
 
-
 procedure pinOn;
 begin
     Serial.WriteLn('Enter Pin #: ');
