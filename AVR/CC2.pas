@@ -16,7 +16,7 @@ const
 
   BLOWER1  = 9;
   BLOWER2  = 10;
-  BLOWER3  = 11; // placeholder, fix later
+  BLOWER3  = 11; 
 
 var
   vac1, vac2, vac3        : Integer;
@@ -138,6 +138,22 @@ procedure selfTest;
           Serial.WriteLn('TEST COMPLETE');
      end;
 
+
+procedure pinOn;
+begin
+    Serial.WriteLn('Enter Pin #: ');
+    con := Serial.ReadByte - 48;
+    digitalWrite(con, 1);
+end;
+
+procedure pinOff;
+begin
+    Serial.WriteLn('Enter Pin #: ');
+    con := Serial.ReadByte - 48;
+    digitalWrite(con, 0);
+end;
+
+
 // INITITALIZE SERIAL CONNECTION - 9600 BAUD
 procedure serialInit;
      begin
@@ -162,6 +178,8 @@ begin
   Serial.WriteLn('6 - Heat/Cool');
   Serial.WriteLn('7 - List Pins');
   Serial.WriteLn('8 - Selftest');
+  Serial.WriteLn('9 - Turn On Pin');
+  Serial.WriteLn('10 - Turn Off Pin');
 
   repeat
     while Serial.Available = 0 do ;
@@ -180,7 +198,9 @@ begin
       6: toggleHeat;
       7: listPin;
       8: selfTest;
-      9: ;
+      9: pinOn;
+      10: pinOff;
+      10: ;
 
     else
       if (con <> (10-48)) and (con <> (13-48)) then
@@ -190,5 +210,5 @@ begin
     delay(10);
     while Serial.Available > 0 do Serial.ReadByte;
 
-  until con = 9;
+  until con = 11;
 end.
